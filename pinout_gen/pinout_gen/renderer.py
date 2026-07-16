@@ -94,8 +94,8 @@ def _body_path_button(geo: ConnectorGeometry, n_per_row: int) -> str:
     )
 
 
-def _body_path_header_female(geo: ConnectorGeometry, n_per_row: int) -> str:
-    """Female header housing with pitch-scaled chamfers and keyed joints."""
+def _body_path_header_male(geo: ConnectorGeometry, n_per_row: int) -> str:
+    """Male header housing with pitch-scaled chamfers and keyed joints."""
     W, H = geo.connector_width(n_per_row), geo.height
     chamfer = min(geo.pin_pitch * 0.10, W / 4, H / 4)
     notch = min(geo.pin_pitch * 0.20, H / 3)
@@ -115,7 +115,7 @@ def _body_path_header_female(geo: ConnectorGeometry, n_per_row: int) -> str:
     return d + " Z"
 
 
-def _header_female_cavities(geo: ConnectorGeometry, n_per_row: int) -> str:
+def _header_male_cavities(geo: ConnectorGeometry, n_per_row: int) -> str:
     cavity = geo.cavity_size if geo.cavity_size > 0 else min(geo.pin_pitch * 0.25, geo.height * 0.25)
     half = cavity / 2
     fill = 'fill="var(--conn-cavity,#d0d0c8)"'
@@ -207,14 +207,14 @@ def _screw_terminal_cavities(geo: ConnectorGeometry, n_per_row: int) -> str:
     return '\n'.join(parts)
 
 
-def _body_path_open_air(geo: ConnectorGeometry, n_per_row: int) -> str:
-    """Rectangular outer frame for an open-air screw terminal strip."""
+def _body_path_barrier(geo: ConnectorGeometry, n_per_row: int) -> str:
+    """Rectangular outer frame for a barrier screw terminal strip."""
     W, H = geo.connector_width(n_per_row), geo.height
     return f"M 0,0 L {W:.1f},0 L {W:.1f},{H:.1f} L 0,{H:.1f} Z"
 
 
-def _open_air_details(geo: ConnectorGeometry, n_per_row: int) -> str:
-    """Open metal cages, frame rails, and cross-drive screw heads."""
+def _barrier_details(geo: ConnectorGeometry, n_per_row: int) -> str:
+    """Metal cages, frame rails, and cross-drive screw heads."""
     W, H, p = geo.connector_width(n_per_row), geo.height, geo.pin_pitch
     screw_r = min(geo.cavity_size / 2 if geo.cavity_size > 0 else p * 0.40, p * 0.42)
     frame_fill = 'fill="var(--conn-body,#e8e8e0)"'
@@ -395,8 +395,10 @@ def render_connector_svg(connector: Connector, conn_type: ConnectorType) -> str:
     else:
         rot_w, rot_h = conn_h, conn_w
 
-    # ── Pin position helper ──
-    def _pin_pos(pin_idx: int) -> tuple[float, float]:
+    # ── Pin position helpers ──
+    def _pin_offset(pin_idx: int) -> tuple[float, float]:
+        """Rotated offset of a pin from the body centre; independent of
+        padding, so it can size the padding itself and later place pins."""
         row_slot, row_num = pin_map[pin_idx]
         if row_num == 2 and geo.row2_pin_pitch_y > 0:
             r2_pl = geo.row2_padding_left if geo.row2_padding_left >= 0 else geo.padding_left
@@ -406,8 +408,10 @@ def render_connector_svg(connector: Connector, conn_type: ConnectorType) -> str:
         else:
             px0 = pxs0[row_slot]
             py0 = geo.pin_cy if row_num != 2 else geo.row2_pin_cy
-        dx, dy = px0 - cx0, py0 - cy0
-        rdx, rdy = _rotate_cw(dx, dy, ori)
+        return _rotate_cw(px0 - cx0, py0 - cy0, ori)
+
+    def _pin_pos(pin_idx: int) -> tuple[float, float]:
+        rdx, rdy = _pin_offset(pin_idx)
         return conn_cx + rdx, conn_cy + rdy
 
     # ── Effective pinout directions ──
@@ -450,6 +454,13 @@ def render_connector_svg(connector: Connector, conn_type: ConnectorType) -> str:
         ll = r2_line if row_num == 2 else r1_line
         label_extent = text_h if eff in ("bottom", "top") else max_text_w
         pad[eff] = max(pad[eff], ll + label_steps[i] * text_h + label_extent)
+        if eff in ("bottom", "top"):
+            # Middle-anchored labels extend horizontally past the body on edge
+            # pins; widen the side paddings by the overhang so they aren't cropped.
+            half_w = len(pins[i].name) * font_sz * char_w / 2 + 2
+            rdx, _ = _pin_offset(i)
+            pad["left"] = max(pad["left"], margin + half_w - (rot_w / 2 + rdx))
+            pad["right"] = max(pad["right"], margin + half_w - (rot_w / 2 - rdx))
 
     svg_w = pad["left"] + rot_w + pad["right"]
     svg_h = pad["top"] + rot_h + pad["bottom"]
@@ -484,12 +495,12 @@ def render_connector_svg(connector: Connector, conn_type: ConnectorType) -> str:
         path_d = _body_path_grid(geo, n_per_row)
     elif style == "xt30":
         path_d = _body_path_xt30(geo, n_per_row)
-    elif style == "header-female":
-        path_d = _body_path_header_female(geo, n_per_row)
+    elif style == "header-male":
+        path_d = _body_path_header_male(geo, n_per_row)
     elif style == "screw-terminal":
         path_d = _body_path_screw_terminal(geo, n_per_row)
-    elif style == "open-air":
-        path_d = _body_path_open_air(geo, n_per_row)
+    elif style == "barrier":
+        path_d = _body_path_barrier(geo, n_per_row)
     elif style == "button":
         path_d = _body_path_button(geo, n_per_row)
     else:
@@ -505,12 +516,12 @@ def render_connector_svg(connector: Connector, conn_type: ConnectorType) -> str:
     w = geo.wall
     if style == "xt30":
         parts.append(_xt30_cavities(geo, n_per_row))
-    elif style == "header-female":
-        parts.append(_header_female_cavities(geo, n_per_row))
+    elif style == "header-male":
+        parts.append(_header_male_cavities(geo, n_per_row))
     elif style == "screw-terminal":
         parts.append(_screw_terminal_cavities(geo, n_per_row))
-    elif style == "open-air":
-        parts.append(_open_air_details(geo, n_per_row))
+    elif style == "barrier":
+        parts.append(_barrier_details(geo, n_per_row))
     elif style == "button":
         parts.append(_button_cavities(geo, n_per_row))
     elif style == "grid" and geo.cavity_size > 0:
@@ -664,7 +675,7 @@ _HTML_TEMPLATE = '''\
   --line-color:#888; --label-color:#ddd;
   --desc-color:#aaa; --type-color:#888;
 }}}}
-[data-theme="dark"]{{
+:root[data-theme="dark"]{{
   --bg:#131313; --text:#e0e0e0;
   --tip-bg:#1e1e1e; --tip-border:#3a3a3a; --tip-shadow:rgba(0,0,0,.4);
   --hs-hover:rgba(96,165,250,.15); --hs-stroke:rgba(96,165,250,.5);
@@ -674,6 +685,17 @@ _HTML_TEMPLATE = '''\
   --conn-body:#3a3a35; --conn-cavity:#2e2e28; --conn-stroke:#aaa;
   --line-color:#888; --label-color:#ddd;
   --desc-color:#aaa; --type-color:#888;
+}}
+:root[data-theme="light"]{{
+  --bg:#ffffff; --text:#1a1a1a;
+  --tip-bg:#ffffff; --tip-border:#d0d0d0; --tip-shadow:rgba(0,0,0,.12);
+  --hs-hover:rgba(59,130,246,.13); --hs-stroke:rgba(59,130,246,.5);
+  --hs-active:rgba(59,130,246,.22);
+  --hint-bg:rgba(30,30,30,.75); --hint-text:#fff;
+  --divider:#e5e5e5;
+  --conn-body:#e8e8e0; --conn-cavity:#d0d0c8; --conn-stroke:#555;
+  --line-color:#777; --label-color:#333;
+  --desc-color:#555; --type-color:#888;
 }}
 *,*::before,*::after{{margin:0;padding:0;box-sizing:border-box}}
 html,body{{height:100%;background:var(--bg);color:var(--text);
@@ -691,8 +713,12 @@ body{{display:flex;height:100%;overflow:hidden}}
 .tt{{position:absolute;background:var(--tip-bg);border:1px solid var(--tip-border);
   border-radius:10px;padding:14px 16px;box-shadow:0 6px 20px var(--tip-shadow);
   z-index:1000;opacity:0;pointer-events:none;transition:opacity .15s ease;
-  max-width:min(420px,90vw);line-height:1.4;font-family:Roboto,sans-serif}}
-.tt.vis{{opacity:1;pointer-events:auto}}
+  max-width:min(420px,calc(100vw - 12px));max-height:calc(100vh - 16px);
+  overflow-y:auto;overscroll-behavior:contain;
+  line-height:1.4;font-family:Roboto,sans-serif}}
+.tt.vis{{opacity:1}}
+.tt.pin{{pointer-events:auto}}
+.tt-s svg{{max-width:100%;max-height:min(300px,55vh);width:auto;height:auto}}
 .tt-h{{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
   margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)}}
 .tt-n{{font-weight:600;font-size:14px;color:var(--text)}}
@@ -727,6 +753,51 @@ body{{display:flex;height:100%;overflow:hidden}}
 .cl-n{{font-weight:500;font-size:13px}}
 .cl-t{{font-size:11px;color:var(--type-color);white-space:nowrap}}
 </style>
+<script>
+/* Theme sync: ?theme=dark|light forces a theme; otherwise follow the embedding
+   page's toggle (MkDocs Material / Zensical set data-md-color-scheme on body,
+   "slate" = dark) via same-origin parent access + MutationObserver, or a
+   {{pinconnectTheme:"dark"|"light"}} postMessage for cross-origin embeds.
+   With no signal, data-theme stays unset and prefers-color-scheme applies. */
+(function(){{
+  var root=document.documentElement;
+  function apply(t){{
+    if(t==='dark'||t==='light')root.setAttribute('data-theme',t);
+    else root.removeAttribute('data-theme');
+  }}
+  window.addEventListener('message',function(e){{
+    if(e.data&&typeof e.data==='object'&&'pinconnectTheme' in e.data)apply(e.data.pinconnectTheme);
+  }});
+  var forced=null;
+  try{{forced=new URLSearchParams(location.search).get('theme')}}catch(err){{}}
+  if(forced==='dark'||forced==='light'){{apply(forced);return}}
+  function fromParent(){{
+    try{{
+      if(window.parent===window)return null;
+      var pd=window.parent.document;
+      var md=(pd.body&&pd.body.getAttribute('data-md-color-scheme'))||
+             pd.documentElement.getAttribute('data-md-color-scheme');
+      if(md)return md==='slate'?'dark':'light';
+      var dt=pd.documentElement.getAttribute('data-theme')||
+             (pd.body&&pd.body.getAttribute('data-theme'));
+      if(dt==='dark'||dt==='light')return dt;
+      if(pd.documentElement.classList.contains('dark')||
+         (pd.body&&pd.body.classList.contains('dark')))return 'dark';
+      return null;
+    }}catch(err){{return null}}
+  }}
+  function sync(){{var t=fromParent();if(t)apply(t)}}
+  sync();
+  try{{
+    if(window.parent!==window){{
+      var pd=window.parent.document;
+      var mo=new MutationObserver(sync);
+      mo.observe(pd.documentElement,{{attributes:true}});
+      if(pd.body)mo.observe(pd.body,{{attributes:true}});
+    }}
+  }}catch(err){{}}
+}})();
+</script>
 </head>
 <body>
 <div class="bd">
@@ -768,9 +839,9 @@ function show(id,el){{
   tt.innerHTML=`<div class="tt-h"><span class="tt-n">${{d.name}}</span>`+
     `<span class="tt-t">${{d.typeName}} · ${{d.pinCount}}-pin</span></div>`+
     `<div class="tt-s">${{d.svg}}</div>`+dh;
-  pos(el); tt.classList.add('vis'); aId=id;
+  pos(el); tt.classList.add('vis'); tt.classList.toggle('pin',pinned); aId=id;
 }}
-function hide(){{tt.classList.remove('vis');unmark();aId=null;pinned=false}}
+function hide(){{tt.classList.remove('vis','pin');unmark();aId=null;pinned=false}}
 function pos(el){{
   tt.style.left='0';tt.style.top='0';tt.style.visibility='hidden';tt.classList.add('vis');
   const wr=pw.getBoundingClientRect(),tr=tt.getBoundingClientRect();

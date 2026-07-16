@@ -92,7 +92,7 @@ function bodyPathButton(geo, nPerRow) {
   );
 }
 
-function bodyPathHeaderFemale(geo, nPerRow) {
+function bodyPathHeaderMale(geo, nPerRow) {
   const W = geo.connectorWidth(nPerRow), H = geo.height;
   const chamfer = Math.min(geo.pin_pitch * 0.10, W / 4, H / 4);
   const notch = Math.min(geo.pin_pitch * 0.20, H / 3);
@@ -113,7 +113,7 @@ function bodyPathHeaderFemale(geo, nPerRow) {
   return d + " Z";
 }
 
-function headerFemaleCavities(geo, nPerRow) {
+function headerMaleCavities(geo, nPerRow) {
   const cavity = geo.cavity_size > 0 ? geo.cavity_size : Math.min(geo.pin_pitch * 0.25, geo.height * 0.25);
   const half = cavity / 2;
   const fill = 'fill="var(--conn-cavity,#d0d0c8)"';
@@ -200,12 +200,12 @@ function screwTerminalCavities(geo, nPerRow) {
   return parts.join("\n");
 }
 
-function bodyPathOpenAir(geo, nPerRow) {
+function bodyPathBarrier(geo, nPerRow) {
   const W = geo.connectorWidth(nPerRow), H = geo.height;
   return `M 0,0 L ${f1(W)},0 L ${f1(W)},${f1(H)} L 0,${f1(H)} Z`;
 }
 
-function openAirDetails(geo, nPerRow) {
+function barrierDetails(geo, nPerRow) {
   const W = geo.connectorWidth(nPerRow), H = geo.height, p = geo.pin_pitch;
   const screwR = Math.min(geo.cavity_size > 0 ? geo.cavity_size / 2 : p * 0.40, p * 0.42);
   const frameFill = 'fill="var(--conn-body,#e8e8e0)"';
@@ -416,6 +416,22 @@ export function renderConnectorSVG(connector, connType) {
     sideCounts[eff] += 1;
   }
 
+  // Rotated offset of a pin from the body centre; independent of padding,
+  // so it can size the padding itself and later place the pins.
+  function pinOffset(pinIdx) {
+    const [rowSlot, rowNum] = pinMap.get(pinIdx);
+    let px0, py0;
+    if (rowNum === 2 && geo.row2_pin_pitch_y > 0) {
+      const r2Pl = geo.row2_padding_left >= 0 ? geo.row2_padding_left : geo.padding_left;
+      px0 = r2Pl;
+      py0 = geo.row2_pin_cy + (rowSlot - (r2Global.length - 1) / 2) * geo.row2_pin_pitch_y;
+    } else {
+      px0 = pxs0[rowSlot];
+      py0 = rowNum !== 2 ? geo.pin_cy : geo.row2_pin_cy;
+    }
+    return rotateCW(px0 - cx0, py0 - cy0, ori);
+  }
+
   const pad = {};
   for (const s of sides) pad[s] = margin;
   for (let i = 0; i < n; i++) {
@@ -424,6 +440,14 @@ export function renderConnectorSVG(connector, connType) {
     const ll = rowNum === 2 ? r2Line : r1Line;
     const labelExtent = (eff === "bottom" || eff === "top") ? textH : maxTextW;
     pad[eff] = Math.max(pad[eff], ll + labelSteps.get(i) * textH + labelExtent);
+    if (eff === "bottom" || eff === "top") {
+      // Middle-anchored labels extend horizontally past the body on edge
+      // pins; widen the side paddings by the overhang so they aren't cropped.
+      const halfW = (pins[i].name.length * fontSize * charW) / 2 + 2;
+      const [rdx] = pinOffset(i);
+      pad["left"] = Math.max(pad["left"], margin + halfW - (rotW / 2 + rdx));
+      pad["right"] = Math.max(pad["right"], margin + halfW - (rotW / 2 - rdx));
+    }
   }
 
   const svgW = pad["left"] + rotW + pad["right"];
@@ -440,19 +464,7 @@ export function renderConnectorSVG(connector, connType) {
   const pxH = Math.round(svgH * SCALE);
 
   function pinPos(pinIdx) {
-    const [rowSlot, rowNum] = pinMap.get(pinIdx);
-    let px0, py0;
-    if (rowNum === 2 && geo.row2_pin_pitch_y > 0) {
-      const r2Pl = geo.row2_padding_left >= 0 ? geo.row2_padding_left : geo.padding_left;
-      px0 = r2Pl;
-      const nR2 = r2Global.length;
-      py0 = geo.row2_pin_cy + (rowSlot - (nR2 - 1) / 2) * geo.row2_pin_pitch_y;
-    } else {
-      px0 = pxs0[rowSlot];
-      py0 = rowNum !== 2 ? geo.pin_cy : geo.row2_pin_cy;
-    }
-    const dx = px0 - cx0, dy = py0 - cy0;
-    const [rdx, rdy] = rotateCW(dx, dy, ori);
+    const [rdx, rdy] = pinOffset(pinIdx);
     return [connCx + rdx, connCy + rdy];
   }
 
@@ -475,9 +487,9 @@ export function renderConnectorSVG(connector, connType) {
   if (style === "latch")      pathD = bodyPathLatch(geo, nPerRow);
   else if (style === "grid")  pathD = bodyPathGrid(geo, nPerRow);
   else if (style === "xt30")  pathD = bodyPathXt30(geo, nPerRow);
-  else if (style === "header-female") pathD = bodyPathHeaderFemale(geo, nPerRow);
+  else if (style === "header-male") pathD = bodyPathHeaderMale(geo, nPerRow);
   else if (style === "screw-terminal") pathD = bodyPathScrewTerminal(geo, nPerRow);
-  else if (style === "open-air") pathD = bodyPathOpenAir(geo, nPerRow);
+  else if (style === "barrier") pathD = bodyPathBarrier(geo, nPerRow);
   else if (style === "button") pathD = bodyPathButton(geo, nPerRow);
   else                        pathD = bodyPathBox(geo, nPerRow);
 
@@ -491,12 +503,12 @@ export function renderConnectorSVG(connector, connType) {
   const w = geo.wall;
   if (style === "xt30") {
     parts.push(xt30Cavities(geo, nPerRow));
-  } else if (style === "header-female") {
-    parts.push(headerFemaleCavities(geo, nPerRow));
+  } else if (style === "header-male") {
+    parts.push(headerMaleCavities(geo, nPerRow));
   } else if (style === "screw-terminal") {
     parts.push(screwTerminalCavities(geo, nPerRow));
-  } else if (style === "open-air") {
-    parts.push(openAirDetails(geo, nPerRow));
+  } else if (style === "barrier") {
+    parts.push(barrierDetails(geo, nPerRow));
   } else if (style === "button") {
     parts.push(buttonCavities(geo, nPerRow));
   } else if (style === "grid" && geo.cavity_size > 0) {
