@@ -1,6 +1,6 @@
 {
   "name": "1.27mm Header",
-  "style": "header-male",
+  "style": "header-female",
   "geometry": {
     "pin_pitch": 5.0,
     "padding_left": 2.5,

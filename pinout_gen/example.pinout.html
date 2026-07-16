@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#ffffff; --text:#1a1a1a;
+  --tip-bg:#ffffff; --tip-border:#d0d0d0; --tip-shadow:rgba(0,0,0,.12);
+  --hs-hover:rgba(59,130,246,.13); --hs-stroke:rgba(59,130,246,.5);
+  --hs-active:rgba(59,130,246,.22);
+  --hint-bg:rgba(30,30,30,.75); --hint-text:#fff;
+  --divider:#e5e5e5;
+  --conn-body:#e8e8e0; --conn-cavity:#d0d0c8; --conn-stroke:#555;
+  --line-color:#777; --label-color:#333;
+  --desc-color:#555; --type-color:#888;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#131313; --text:#e0e0e0;
+  --tip-bg:#1e1e1e; --tip-border:#3a3a3a; --tip-shadow:rgba(0,0,0,.4);
+  --hs-hover:rgba(96,165,250,.15); --hs-stroke:rgba(96,165,250,.5);
+  --hs-active:rgba(96,165,250,.25);
+  --hint-bg:rgba(240,240,240,.85); --hint-text:#131313;
+  --divider:#333;
+  --conn-body:#3a3a35; --conn-cavity:#2e2e28; --conn-stroke:#aaa;
+  --line-color:#888; --label-color:#ddd;
+  --desc-color:#aaa; --type-color:#888;
+}}
+[data-theme="dark"]{
+  --bg:#131313; --text:#e0e0e0;
+  --tip-bg:#1e1e1e; --tip-border:#3a3a3a; --tip-shadow:rgba(0,0,0,.4);
+  --hs-hover:rgba(96,165,250,.15); --hs-stroke:rgba(96,165,250,.5);
+  --hs-active:rgba(96,165,250,.25);
+  --hint-bg:rgba(240,240,240,.85); --hint-text:#131313;
+  --divider:#333;
+  --conn-body:#3a3a35; --conn-cavity:#2e2e28; --conn-stroke:#aaa;
+  --line-color:#888; --label-color:#ddd;
+  --desc-color:#aaa; --type-color:#888;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:Roboto,system-ui,sans-serif}
+body{display:flex;height:100%;overflow:hidden}
+.bd{flex:1;display:flex;align-items:center;justify-content:center;
+  min-width:0;height:100%;overflow:hidden;position:relative}
+.pw{position:relative;display:inline-block;line-height:0;max-width:100%}
+.pw img{display:block;width:auto;height:auto;max-width:100%;max-height:100vh;user-select:none;-webkit-user-drag:none}
+.po{position:absolute;inset:0;width:100%;height:100%}
+.hs{fill:transparent;stroke:transparent;stroke-width:2;cursor:pointer;transition:fill .18s,stroke .18s}
+.hs.pulse{fill:var(--hs-hover);stroke:var(--hs-stroke)}
+@media(hover:hover){.hs:hover{fill:var(--hs-hover);stroke:var(--hs-stroke)}}
+.hs.active{fill:var(--hs-active);stroke:var(--hs-stroke)}
+.tt{position:absolute;background:var(--tip-bg);border:1px solid var(--tip-border);
+  border-radius:10px;padding:14px 16px;box-shadow:0 6px 20px var(--tip-shadow);
+  z-index:1000;opacity:0;pointer-events:none;transition:opacity .15s ease;
+  max-width:min(420px,90vw);line-height:1.4;font-family:Roboto,sans-serif}
+.tt.vis{opacity:1;pointer-events:auto}
+.tt-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)}
+.tt-n{font-weight:600;font-size:14px;color:var(--text)}
+.tt-t{font-size:11px;color:var(--type-color);white-space:nowrap}
+.tt-s{display:flex;justify-content:center;padding:4px 0}
+.tt-d{font-size:12.5px;color:var(--desc-color);margin-top:10px;padding-top:8px;
+  border-top:1px solid var(--divider);line-height:1.5}
+.bb{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:var(--tip-bg);color:var(--type-color);border:1px solid var(--tip-border);
+  padding:7px 18px;border-radius:12px;font-size:12px;font-family:Roboto,sans-serif;
+  box-shadow:0 2px 8px var(--tip-shadow);
+  display:flex;align-items:center;gap:8px;white-space:nowrap}
+.bb a{color:var(--text);text-decoration:none;font-weight:500}
+.bb a:hover{text-decoration:underline}
+.sb-btn{position:absolute;right:10px;top:10px;z-index:600;width:36px;height:36px;
+  background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:8px;
+  cursor:pointer;box-shadow:0 2px 8px var(--tip-shadow);font-size:18px;
+  color:var(--text);display:flex;align-items:center;justify-content:center;
+  line-height:1;transition:background .15s;opacity:.85}
+.sb-btn:hover{opacity:1;background:var(--hs-hover)}
+.sb{width:240px;height:calc(100% - 16px);flex-shrink:0;overflow:hidden;
+  background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:12px;
+  margin:8px 8px 8px 0;box-shadow:0 2px 8px var(--tip-shadow);
+  transition:width .2s ease,margin .2s ease,opacity .2s ease,border-width .2s ease}
+.sb.hid{width:0;margin-right:0;margin-left:0;opacity:0;border-width:0}
+.sb-in{width:240px;height:100%;overflow-y:auto;padding:12px 0}
+.sb-t{font-weight:600;font-size:13px;padding:0 14px 8px;
+  border-bottom:1px solid var(--divider);margin-bottom:4px;color:var(--text)}
+.cl-i{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 14px;cursor:pointer;transition:background .15s;gap:8px}
+.cl-i:hover,.cl-i.active{background:var(--hs-hover)}
+.cl-n{font-weight:500;font-size:13px}
+.cl-t{font-size:11px;color:var(--type-color);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="bd">
+  <div class="pw" id="pw">
+    <img src="board.png" alt="Test" width="1600" height="1200">
+    <svg class="po" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid meet">
+    <rect class="hs" data-id="FAN" x="1279" y="246" width="148" height="115" rx="3"/>
+    <rect class="hs" data-id="SW5" x="1279" y="366" width="148" height="114" rx="3"/>
+    <rect class="hs" data-id="SW4" x="1279" y="483" width="148" height="114" rx="3"/>
+    <rect class="hs" data-id="SW3" x="1279" y="601" width="148" height="113" rx="3"/>
+    <rect class="hs" data-id="SW2" x="1279" y="717" width="148" height="115" rx="3"/>
+    <rect class="hs" data-id="SW1" x="1279" y="835" width="148" height="115" rx="3"/>
+    <rect class="hs" data-id="STP2" x="1130" y="274" width="115" height="241" rx="3"/>
+    <rect class="hs" data-id="STP1" x="1130" y="680" width="115" height="240" rx="3"/>
+    <rect class="hs" data-id="SW6" x="176" y="682" width="146" height="265" rx="3"/>
+    <rect class="hs" data-id="USB" x="450" y="858" width="168" height="138" rx="3"/>
+    <rect class="hs" data-id="CAN+VIN" x="167" y="249" width="164" height="261" rx="3"/>
+    <rect class="hs" data-id="Test1" x="100" y="100" width="50" height="50" rx="3"/>
+    <rect class="hs" data-id="Test2" x="200" y="100" width="50" height="50" rx="3"/>
+    </svg>
+    <div class="tt" id="tt"></div>
+    <button class="sb-btn" id="sb-btn" title="Toggle connector list">&#9776;</button>
+  </div>
+  <div class="bb">
+    <span>Click or tap a connector to see its pinout</span>
+    <span>&middot;</span>
+    <span>Created with <a href="https://github.com/xbst/PinConnect" target="_blank" rel="noopener">PinConnect</a></span>
+  </div>
+</div>
+<div class="sb hid" id="sb">
+  <div class="sb-in">
+    <div class="sb-t">Connectors</div>
+    <div class="cl-i" data-id="FAN"><span class="cl-n">Fan</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="SW5"><span class="cl-n">Switch 5</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="SW4"><span class="cl-n">Switch 4</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="SW3"><span class="cl-n">Switch 3</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="SW2"><span class="cl-n">Switch 2</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="SW1"><span class="cl-n">Switch 1</span><span class="cl-t">JST-XH &middot; 2p</span></div>
+    <div class="cl-i" data-id="STP2"><span class="cl-n">Stepper 2</span><span class="cl-t">JST-XH &middot; 4p</span></div>
+    <div class="cl-i" data-id="STP1"><span class="cl-n">Stepper 1</span><span class="cl-t">JST-XH &middot; 4p</span></div>
+    <div class="cl-i" data-id="SW6"><span class="cl-n">TurtleNeck</span><span class="cl-t">JST-PH &middot; 5p</span></div>
+    <div class="cl-i" data-id="USB"><span class="cl-n">USB-C</span><span class="cl-t">USB-C &middot; 0p</span></div>
+    <div class="cl-i" data-id="CAN+VIN"><span class="cl-n">Power &amp; Data</span><span class="cl-t">XT30(2+2) &middot; 4p</span></div>
+    <div class="cl-i" data-id="Test1"><span class="cl-n">MF 2x2 Test</span><span class="cl-t">Micro-Fit &middot; 4p</span></div>
+    <div class="cl-i" data-id="Test2"><span class="cl-n">MF 4P Test</span><span class="cl-t">Micro-Fit &middot; 4p</span></div>
+  </div>
+</div>
+<script>
+const C={"FAN": {"name": "Fan", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n</svg>", "description": "Always-on fan connector, VIN", "typeName": "JST-XH", "pinCount": 2}, "SW5": {"name": "Switch 5", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">PB12</text>\n</svg>", "description": "Switch connector: Hub", "typeName": "JST-XH", "pinCount": 2}, "SW4": {"name": "Switch 4", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">PB11</text>\n</svg>", "description": "Switch connector: Lane 2-Load", "typeName": "JST-XH", "pinCount": 2}, "SW3": {"name": "Switch 3", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">PB2</text>\n</svg>", "description": "Switch connector: Lane 2-Prep", "typeName": "JST-XH", "pinCount": 2}, "SW2": {"name": "Switch 2", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">PB1</text>\n</svg>", "description": "Switch connector: Lane 1-Load", "typeName": "JST-XH", "pinCount": 2}, "SW1": {"name": "Switch 1", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40.0 61.0\" width=\"120\" height=\"183\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"25.0\" y1=\"14.5\" x2=\"25.0\" y2=\"43.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"15.0\" y1=\"14.5\" x2=\"15.0\" y2=\"52.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(20.0,16.5) rotate(180) translate(-15.0,-11.5)\">\n<path d=\"M 0,0 L 30.0,0 L 30.0,23.0 L 22.0,23.0 L 22.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"24.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"25.0\" cy=\"14.5\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"25.0\" y=\"50.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"15.0\" cy=\"14.5\" r=\"3.0\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"59.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">PB10</text>\n</svg>", "description": "Switch connector: Lane 1-Prep", "typeName": "JST-XH", "pinCount": 2}, "STP2": {"name": "Stepper 2", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 50.6 60.0\" width=\"152\" height=\"180\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"14.5\" y1=\"15.0\" x2=\"43.0\" y2=\"15.0\" stroke=\"#3498DB\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"25.0\" x2=\"43.0\" y2=\"25.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"35.0\" x2=\"43.0\" y2=\"35.0\" stroke=\"#2ECC71\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"45.0\" x2=\"43.0\" y2=\"45.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(16.5,30.0) rotate(90) translate(-25.0,-11.5)\">\n<path d=\"M 0,0 L 50.0,0 L 50.0,23.0 L 42.0,23.0 L 42.0,20.4 L 36.0,20.4 L 36.0,23.0 L 14.0,23.0 L 14.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"44.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"14.5\" cy=\"15.0\" r=\"3.0\" fill=\"#3498DB\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"15.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">B</text>\n<circle cx=\"14.5\" cy=\"25.0\" r=\"3.0\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"25.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">B</text>\n<circle cx=\"14.5\" cy=\"35.0\" r=\"3.0\" fill=\"#2ECC71\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"35.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">A</text>\n<circle cx=\"14.5\" cy=\"45.0\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"45.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">A</text>\n</svg>", "description": "Lane 2 extruder stepper connector", "typeName": "JST-XH", "pinCount": 4}, "STP1": {"name": "Stepper 1", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 50.6 60.0\" width=\"152\" height=\"180\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"14.5\" y1=\"15.0\" x2=\"43.0\" y2=\"15.0\" stroke=\"#3498DB\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"25.0\" x2=\"43.0\" y2=\"25.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"35.0\" x2=\"43.0\" y2=\"35.0\" stroke=\"#2ECC71\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"14.5\" y1=\"45.0\" x2=\"43.0\" y2=\"45.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(16.5,30.0) rotate(90) translate(-25.0,-11.5)\">\n<path d=\"M 0,0 L 50.0,0 L 50.0,23.0 L 42.0,23.0 L 42.0,20.4 L 36.0,20.4 L 36.0,23.0 L 14.0,23.0 L 14.0,20.4 L 8.0,20.4 L 8.0,23.0 L 0,23.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.6\" y=\"2.6\" width=\"44.8\" height=\"17.8\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"14.5\" cy=\"15.0\" r=\"3.0\" fill=\"#3498DB\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"15.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">B</text>\n<circle cx=\"14.5\" cy=\"25.0\" r=\"3.0\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"25.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">B</text>\n<circle cx=\"14.5\" cy=\"35.0\" r=\"3.0\" fill=\"#2ECC71\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"35.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">A</text>\n<circle cx=\"14.5\" cy=\"45.0\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"46.0\" y=\"45.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">A</text>\n</svg>", "description": "Lane 1 extruder stepper connector", "typeName": "JST-XH", "pinCount": 4}, "SW6": {"name": "TurtleNeck", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 52.4 58.0\" width=\"157\" height=\"174\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"39.4\" y1=\"45.0\" x2=\"18.4\" y2=\"45.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"39.4\" y1=\"37.0\" x2=\"18.4\" y2=\"37.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"39.4\" y1=\"29.0\" x2=\"18.4\" y2=\"29.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"39.4\" y1=\"21.0\" x2=\"18.4\" y2=\"21.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"39.4\" y1=\"13.0\" x2=\"18.4\" y2=\"13.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(37.9,29.0) rotate(270) translate(-24.0,-9.5)\">\n<path d=\"M 0,0 L 48.0,0 L 48.0,19.0 L 42.0,19.0 L 42.0,16.8 L 36.0,16.8 L 36.0,19.0 L 12.0,19.0 L 12.0,16.8 L 6.0,16.8 L 6.0,19.0 L 0,19.0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"2.2\" y=\"2.2\" width=\"43.6\" height=\"14.6\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"39.4\" cy=\"45.0\" r=\"2.5\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.4\" y=\"45.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"39.4\" cy=\"37.0\" r=\"2.5\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.4\" y=\"37.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">PA3</text>\n<circle cx=\"39.4\" cy=\"29.0\" r=\"2.5\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.4\" y=\"29.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">PA2</text>\n<circle cx=\"39.4\" cy=\"21.0\" r=\"2.5\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.4\" y=\"21.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"39.4\" cy=\"13.0\" r=\"2.5\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.4\" y=\"13.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">3.3V</text>\n</svg>", "description": "Switch connector: TurtleNeck filament buffer", "typeName": "JST-PH", "pinCount": 5}, "USB": {"name": "USB-C", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 34.0 20.0\" width=\"102\" height=\"60\" style=\"font-family:Roboto,sans-serif\">\n<g transform=\"translate(17.0,10.0) rotate(0) translate(-12.0,-5.0)\">\n<path d=\"M 2.0,0 L 22.0,0 A 2.0,2.0 0 0 1 24.0,2.0 L 24.0,8.0 A 2.0,2.0 0 0 1 22.0,10.0 L 2.0,10.0 A 2.0,2.0 0 0 1 0,8.0 L 0,2.0 A 2.0,2.0 0 0 1 2.0,0 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"4.2\" y=\"4.2\" width=\"15.6\" height=\"1.6\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n</svg>", "description": "USB Type-C port", "typeName": "USB-C", "pinCount": 0}, "CAN+VIN": {"name": "Power & Data", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 47.8 79.0\" width=\"143\" height=\"237\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"34.8\" y1=\"31.0\" x2=\"14.8\" y2=\"31.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"34.8\" y1=\"15.0\" x2=\"14.8\" y2=\"15.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"31.8\" y1=\"43.0\" x2=\"31.8\" y2=\"61.0\" stroke=\"#FFBF00\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"37.8\" y1=\"43.0\" x2=\"37.8\" y2=\"70.0\" stroke=\"#2ECC71\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(34.8,29.0) rotate(270) translate(-24.0,-8.0)\">\n<path d=\"M 2.5,0 L 45.5,0 L 45.5,7.1 L 48.0,7.1 L 48.0,8.9 L 45.5,8.9 L 45.5,16.0 L 2.5,16.0 L 2.5,8.9 L 0,8.9 L 0,7.1 L 2.5,7.1 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"5.9\" y=\"1.8\" width=\"7.4\" height=\"12.3\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<path d=\"M 15.8,4.9 L 18.9,1.8 L 30.0,1.8 L 30.0,2.9 L 32.5,2.9 L 32.5,1.8 L 43.7,1.8 L 43.7,14.2 L 18.9,14.2 L 15.8,11.1 Z\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\" stroke-linejoin=\"round\"/>\n</g>\n<circle cx=\"34.8\" cy=\"31.0\" r=\"3.0\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"11.8\" y=\"31.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"34.8\" cy=\"15.0\" r=\"3.0\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"11.8\" y=\"15.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"31.8\" cy=\"43.0\" r=\"1.2\" fill=\"#FFBF00\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"31.8\" y=\"68.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">H</text>\n<circle cx=\"37.8\" cy=\"43.0\" r=\"1.2\" fill=\"#2ECC71\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"37.8\" y=\"77.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">L</text>\n</svg>", "description": "12-24VIN, CAN or USB data (H: CAN_H or D+, L: CAN_L or D-)", "typeName": "XT30(2+2)", "pinCount": 4}, "Test1": {"name": "MF 2x2 Test", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 97.2 42.0\" width=\"292\" height=\"126\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"55.7\" y1=\"27.0\" x2=\"82.4\" y2=\"27.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"55.7\" y1=\"15.0\" x2=\"82.4\" y2=\"15.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"43.5\" y1=\"27.0\" x2=\"14.8\" y2=\"27.0\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"43.5\" y1=\"15.0\" x2=\"14.8\" y2=\"15.0\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(48.6,21.0) rotate(270) translate(-16.0,-18.8)\">\n<path d=\"M 0,4.0 L 11.8,4.0 L 11.8,0 L 20.2,0 L 20.2,4.0 L 32.0,4.0 L 32.0,35.6 L 20.8,35.6 L 20.8,37.6 L 17.6,37.6 L 17.6,35.6 L 14.4,35.6 L 14.4,37.6 L 11.2,37.6 L 11.2,35.6 L 0,35.6 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"4.8\" y=\"20.6\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"4.8\" y=\"8.4\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"16.8\" y=\"20.6\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"16.8\" y=\"8.4\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"55.7\" cy=\"27.0\" r=\"1.8\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"85.4\" y=\"27.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"55.7\" cy=\"15.0\" r=\"1.8\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"85.4\" y=\"15.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"start\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"43.5\" cy=\"27.0\" r=\"1.8\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"11.8\" y=\"27.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"43.5\" cy=\"15.0\" r=\"1.8\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"11.8\" y=\"15.0\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"end\" dominant-baseline=\"central\" fill=\"var(--label-color,#333)\">GND</text>\n</svg>", "description": "Dummy 2x2 MF", "typeName": "Micro-Fit", "pinCount": 4}, "Test2": {"name": "MF 4P Test", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 66.0 81.6\" width=\"198\" height=\"245\" style=\"font-family:Roboto,sans-serif\">\n<line x1=\"15.0\" y1=\"18.9\" x2=\"15.0\" y2=\"45.6\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"27.0\" y1=\"18.9\" x2=\"27.0\" y2=\"54.6\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"39.0\" y1=\"18.9\" x2=\"39.0\" y2=\"63.6\" stroke=\"#E74C3C\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<line x1=\"51.0\" y1=\"18.9\" x2=\"51.0\" y2=\"72.6\" stroke=\"#2C3E50\" stroke-width=\"1\" stroke-opacity=\"0.65\"/>\n<g transform=\"translate(33.0,17.8) rotate(0) translate(-28.0,-12.8)\">\n<path d=\"M 0,4.0 L 23.8,4.0 L 23.8,0 L 32.2,0 L 32.2,4.0 L 56.0,4.0 L 56.0,23.6 L 32.8,23.6 L 32.8,25.6 L 29.6,25.6 L 29.6,23.6 L 26.4,23.6 L 26.4,25.6 L 23.2,25.6 L 23.2,23.6 L 0,23.6 Z\" fill=\"var(--conn-body,#e8e8e0)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/>\n<rect x=\"4.8\" y=\"8.7\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"16.8\" y=\"8.7\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"28.8\" y=\"8.7\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n<rect x=\"40.8\" y=\"8.7\" width=\"10.5\" height=\"10.5\" fill=\"var(--conn-cavity,#d0d0c8)\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.7\"/>\n</g>\n<circle cx=\"15.0\" cy=\"18.9\" r=\"1.8\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"15.0\" y=\"52.6\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"27.0\" cy=\"18.9\" r=\"1.8\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"27.0\" y=\"61.6\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n<circle cx=\"39.0\" cy=\"18.9\" r=\"1.8\" fill=\"#E74C3C\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"39.0\" y=\"70.6\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">VIN</text>\n<circle cx=\"51.0\" cy=\"18.9\" r=\"1.8\" fill=\"#2C3E50\" stroke=\"var(--conn-stroke,#555)\" stroke-width=\"0.9\"/>\n<text x=\"51.0\" y=\"79.6\" font-size=\"6.0\" font-weight=\"500\" text-anchor=\"middle\" dominant-baseline=\"auto\" fill=\"var(--label-color,#333)\">GND</text>\n</svg>", "description": "Dummy 4P MF", "typeName": "Micro-Fit", "pinCount": 4}};
+const pw=document.getElementById('pw'),tt=document.getElementById('tt'),
+      sb=document.getElementById('sb'),sbBtn=document.getElementById('sb-btn');
+let aId=null,pinned=false,isTouch=false;
+document.addEventListener('touchstart',function(){isTouch=true},{once:true,passive:true});
+sbBtn.addEventListener('click',e=>{e.stopPropagation();sb.classList.toggle('hid');
+  if(aId){const el=hs(aId);if(el)setTimeout(()=>pos(el),0)}});
+function hs(id){return document.querySelector(`.hs[data-id="${id}"]`)}
+function li(id){return document.querySelector(`.cl-i[data-id="${id}"]`)}
+function mark(id){const h=hs(id),l=li(id);if(h)h.classList.add('active');if(l)l.classList.add('active')}
+function unmark(){document.querySelectorAll('.hs.active,.cl-i.active').forEach(e=>e.classList.remove('active'))}
+function show(id,el){
+  const d=C[id]; if(!d) return;
+  let dh=d.description?`<div class="tt-d">${d.description}</div>`:'';
+  tt.innerHTML=`<div class="tt-h"><span class="tt-n">${d.name}</span>`+
+    `<span class="tt-t">${d.typeName} · ${d.pinCount}-pin</span></div>`+
+    `<div class="tt-s">${d.svg}</div>`+dh;
+  pos(el); tt.classList.add('vis'); aId=id;
+}
+function hide(){tt.classList.remove('vis');unmark();aId=null;pinned=false}
+function pos(el){
+  tt.style.left='0';tt.style.top='0';tt.style.visibility='hidden';tt.classList.add('vis');
+  const wr=pw.getBoundingClientRect(),tr=tt.getBoundingClientRect();
+  const svg=el.ownerSVGElement,sr=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;
+  const sx=sr.width/vb.width,sy=sr.height/vb.height;
+  const hx=+el.getAttribute('x'),hy=+el.getAttribute('y'),
+        hw=+el.getAttribute('width'),hh=+el.getAttribute('height');
+  const pl=sr.left+hx*sx-wr.left,pt=sr.top+hy*sy-wr.top,
+        pcx=pl+hw*sx/2,pb=pt+hh*sy;
+  let l=pcx-tr.width/2,t=pb+10;
+  if(t+tr.height>wr.height+20) t=pt-tr.height-10;
+  if(t<0) t=10;
+  l=Math.max(6,Math.min(l,wr.width-tr.width-6));
+  tt.style.left=l+'px';tt.style.top=t+'px';tt.style.visibility='';
+}
+document.querySelectorAll('.hs').forEach(el=>{
+  const id=el.dataset.id;
+  el.addEventListener('mouseenter',()=>{if(!isTouch&&!pinned){mark(id);show(id,el)}});
+  el.addEventListener('mouseleave',()=>{if(!isTouch&&!pinned){unmark();hide()}});
+  el.addEventListener('click',e=>{e.stopPropagation();if(pinned&&aId===id){hide();return}
+    hide();pinned=true;mark(id);show(id,el)});
+});
+document.querySelectorAll('.cl-i').forEach(el=>{
+  const id=el.dataset.id;
+  el.addEventListener('mouseenter',()=>{if(!isTouch&&!pinned){const h=hs(id);if(h){mark(id);show(id,h)}}});
+  el.addEventListener('mouseleave',()=>{if(!isTouch&&!pinned){unmark();hide()}});
+  el.addEventListener('click',e=>{e.stopPropagation();const h=hs(id);if(!h)return;
+    if(pinned&&aId===id){hide();return}hide();pinned=true;mark(id);show(id,h)});
+});
+document.addEventListener('click',e=>{
+  if(pinned&&!tt.contains(e.target)&&!e.target.closest('.cl-i')&&!e.target.closest('.hs'))hide();
+});
+document.querySelectorAll('.hs').forEach(el=>{el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),2000)});
+window.addEventListener('resize',()=>{if(aId){const el=hs(aId);if(el)pos(el)}});
+</script>
+</body>
+</html>
