@@ -2,6 +2,9 @@
 
 An interactive pinout generator for PCBs. PinConnect turns a photo of a board into an interactive pinout diagram you can open in a browser or embed in a documentation site.
 
+
+![animation](assets/AnimatedDemo.gif)
+
 It is made of three tools, used in sequence:
 
 - **pinout-design**: a browser-based designer that turns a board image into a TOML config.
