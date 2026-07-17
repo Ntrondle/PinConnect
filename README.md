@@ -3,11 +3,13 @@
 An interactive pinout generator for PCBs. PinConnect turns a photo of a board into an interactive pinout diagram you can open in a browser or embed in a documentation site.
 
 
-<img
-  src="assets/AnimatedDemo.gif"
-  alt="Animation demo"
-  style="border: 2px solid #d0d7de; border-radius: 8px;"
->
+<table>
+  <tr>
+    <td>
+      <img src="assets/AnimatedDemo.gif" alt="Animation demo">
+    </td>
+  </tr>
+</table>
 
 It is made of three tools, used in sequence:
 
